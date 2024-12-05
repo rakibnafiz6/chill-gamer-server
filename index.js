@@ -33,6 +33,13 @@ async function run() {
 
         const gamerCollection = client.db("gameDB").collection("gamer");
 
+        app.get('/gamers', async(req, res)=>{
+            const cursor = gamerCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+
         app.post('/gamers', async(req, res)=>{
             const newGamer = req.body;
             const result = await gamerCollection.insertOne(newGamer);
