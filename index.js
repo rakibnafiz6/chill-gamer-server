@@ -32,6 +32,13 @@ async function run() {
         await client.connect();
 
         const gamerCollection = client.db("gameDB").collection("gamer");
+        const highsRatingCollection = client.db("gameDB").collection("rating");
+        // .sort((a, b)=>{a.rating - b.rating})
+        // app.get('/highsRating', async(req, res)=>{
+        //     const cursor = gamerCollection.find();
+        //     const result = await cursor.toArray();
+        //     res.send(result);
+        // })
 
         app.get('/gamers', async(req, res)=>{
             const cursor = gamerCollection.find();
@@ -39,7 +46,13 @@ async function run() {
             res.send(result);
         })
 
+        app.post('/highsRating', async(req, res)=>{
+            const newRating = req.body;
+            const result = await highsRatingCollection.insertOne(newRating);
+            res.send(result);
+        })
 
+        // gamers
         app.post('/gamers', async(req, res)=>{
             const newGamer = req.body;
             const result = await gamerCollection.insertOne(newGamer);
