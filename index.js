@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -46,13 +46,28 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/gamers/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await highsRatingCollection.findOne(query);
+            res.send(result);
+        })
+
+        app.get('/gamer/:email', async(req, res)=>{
+            const email = req.params.email;
+            const query = { email };
+            const cursor = gamerCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         app.post('/highsRating', async(req, res)=>{
             const newRating = req.body;
             const result = await highsRatingCollection.insertOne(newRating);
             res.send(result);
         })
 
-        // gamers
+        
         app.post('/gamers', async(req, res)=>{
             const newGamer = req.body;
             const result = await gamerCollection.insertOne(newGamer);
