@@ -61,6 +61,13 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/updateReview/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)};
+            const result = await gamerCollection.findOne(query);
+            res.send(result);
+        })
+
         app.post('/highsRating', async(req, res)=>{
             const newRating = req.body;
             const result = await highsRatingCollection.insertOne(newRating);
@@ -71,6 +78,25 @@ async function run() {
         app.post('/gamers', async(req, res)=>{
             const newGamer = req.body;
             const result = await gamerCollection.insertOne(newGamer);
+            res.send(result);
+        })
+
+        app.put('/updateReview/:id', async(req, res)=>{
+            const id = req.params.id;
+            const filter = {_id: new ObjectId(id)};
+            const options = { upsert: true };
+            const updatedReview = req.body;
+            const review = {
+                $set: {
+                    photo: updatedReview.photo, 
+                    name: updatedReview.name, 
+                    description: updatedReview.description, 
+                    rating: updatedReview.rating, 
+                    year: updatedReview.year, 
+                    genres: updatedReview.genres
+                }
+            }
+            const result = await gamerCollection.updateOne(filter, review, options);
             res.send(result);
         })
 
