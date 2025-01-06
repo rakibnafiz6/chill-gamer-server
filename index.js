@@ -29,14 +29,14 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const gamerCollection = client.db("gameDB").collection("gamer");
-        const highsRatingCollection = client.db("gameDB").collection("rating");
         const watchListCollection = client.db("gameDB").collection("watchList");
+        const testimonialsCollection = client.db("gameDB").collection("testimonials");
         
         app.get('/highsRating', async(req, res)=>{
-            const cursor = highsRatingCollection.find({}).sort({rating: -1}).limit(6);
+            const cursor = gamerCollection.find({}).sort({rating: -1}).limit(6);
             const result = await cursor.toArray();
             res.send(result);
         })
@@ -47,10 +47,11 @@ async function run() {
             res.send(result);
         })
 
+        // details
         app.get('/gamers/:id', async(req, res)=>{
             const id = req.params.id;
             const query = {_id: new ObjectId(id)};
-            const result = await highsRatingCollection.findOne(query);
+            const result = await gamerCollection.findOne(query);
             res.send(result);
         })
 
@@ -76,10 +77,11 @@ async function run() {
             const result = await gamerCollection.findOne(query);
             res.send(result);
         })
-
-        app.post('/highsRating', async(req, res)=>{
-            const newRating = req.body;
-            const result = await highsRatingCollection.insertOne(newRating);
+        
+        // testimonials
+        app.get('/testimonials', async(req, res)=>{
+            const cursor = testimonialsCollection.find();
+            const result = await cursor.toArray();
             res.send(result);
         })
 
@@ -124,7 +126,7 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
